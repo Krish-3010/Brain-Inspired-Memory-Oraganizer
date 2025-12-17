@@ -91,7 +91,8 @@
     const data = await res.json();
     container.innerHTML = '';
     if(!data.results || Object.keys(data.results).length === 0){
-      container.innerHTML = '<p style="color:#cbd8f0;text-align:center;width:100%;">No matching notes found.</p>'; return;
+      container.innerHTML = '<p style="color:#cbd8f0;text-align:center;width:100%;">No matching notes found.</p>'; 
+      return;
     }
     for(const [title, content] of Object.entries(data.results)){
       const card = document.createElement('div'); card.className='note-card';
@@ -102,7 +103,14 @@
     }
   }
 
-  function escapeHtml(s){ return (s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
+  function escapeHtml(s){ 
+    return (s||'').toString()
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;')
+      .replace(/'/g,'&#039;'); 
+  }
 
   // initial load
   loadNotes();

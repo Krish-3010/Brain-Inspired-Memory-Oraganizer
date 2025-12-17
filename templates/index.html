@@ -36,7 +36,9 @@
       z-index: -3;
     }
     @keyframes gradientShift {
-      0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; }
+      0% { background-position: 0% 50%; } 
+      50% { background-position: 100% 50%; } 
+      100% { background-position: 0% 50%; }
     }
 
     /* NAV */
@@ -53,8 +55,18 @@
     .nav-left img { width:44px; height:44px; object-fit:contain; filter: drop-shadow(0 0 12px var(--neon)); }
     .nav-left h2 { margin:0; color:var(--neon); text-shadow:0 0 10px var(--neon); font-size:1.25rem; }
     .nav-right { display:flex; gap:20px; align-items:center; }
-    .nav-right a, .nav-right button { color:#e8eef6; text-decoration:none; background:none; border:none; cursor:pointer; font-weight:600; }
-    .nav-right a:hover, .nav-right button:hover { color: var(--neon); text-shadow:0 0 8px var(--neon); }
+    .nav-right a, .nav-right button { 
+      color:#e8eef6; 
+      text-decoration:none; 
+      background:none; 
+      border:none; 
+      cursor:pointer; 
+      font-weight:600; 
+    }
+    .nav-right a:hover, .nav-right button:hover { 
+      color: var(--neon); 
+      text-shadow:0 0 8px var(--neon); 
+    }
 
     .profile-pic {
       width:42px; height:42px; border-radius:50%; object-fit:cover;
@@ -70,26 +82,62 @@
       font-size: 3.2rem; color: var(--neon); margin:0 0 18px;
       text-shadow: 0 0 30px rgba(0,230,255,0.25);
     }
-    .hero p { max-width:920px; margin: 0 auto 26px; color:#c6d6ee; font-size:1.05rem; }
-    .hero .btn-row { display:flex; gap:18px; justify-content:center; margin-top:12px; }
+    .hero p { 
+      max-width:920px; 
+      margin: 0 auto 26px; 
+      color:#c6d6ee; 
+      font-size:1.05rem; 
+    }
+    .hero .btn-row { 
+      display:flex; 
+      gap:18px; 
+      justify-content:center; 
+      margin-top:12px; 
+    }
     .btn {
-      border:none; padding:12px 22px; border-radius:12px; font-weight:700; cursor:pointer;
-      background: linear-gradient(90deg, var(--neon), var(--neon-2)); color:#000;
+      border:none; 
+      padding:12px 22px; 
+      border-radius:12px; 
+      font-weight:700; 
+      cursor:pointer;
+      background: linear-gradient(90deg, var(--neon), var(--neon-2)); 
+      color:#000;
       box-shadow:0 10px 30px rgba(0,230,255,0.12);
       transition: transform .22s, box-shadow .22s;
     }
-    .btn:hover { transform: translateY(-6px); box-shadow:0 16px 40px rgba(0,230,255,0.18); }
+    .btn:hover { 
+      transform: translateY(-6px); 
+      box-shadow:0 16px 40px rgba(0,230,255,0.18); 
+    }
 
     /* FEATURES */
-    .features { display:flex; gap:20px; justify-content:center; flex-wrap:wrap; padding:40px 20px; }
+    .features { 
+      display:flex; 
+      gap:20px; 
+      justify-content:center; 
+      flex-wrap:wrap; 
+      padding:40px 20px; 
+    }
     .feature {
-      background: var(--card-bg); border-radius:16px; padding:24px; width:260px; min-height:120px;
+      background: var(--card-bg); 
+      border-radius:16px; 
+      padding:24px; 
+      width:260px; 
+      min-height:120px;
       border:1px solid rgba(255,255,255,0.03);
       box-shadow:0 6px 18px rgba(0,0,0,0.4);
     }
-    .feature h3 { color:var(--neon); margin:0 0 8px; font-size:1.1rem; }
+    .feature h3 { 
+      color:var(--neon); 
+      margin:0 0 8px; 
+      font-size:1.1rem; 
+    }
 
-    footer { text-align:center; padding:28px 20px; color:#9fb0d5; }
+    footer { 
+      text-align:center; 
+      padding:28px 20px; 
+      color:#9fb0d5; 
+    }
 
     /* responsive */
     @media (max-width:720px){
@@ -157,8 +205,19 @@
 
   /* particles background */
   particlesJS("particles-js", {
-    particles: { number: { value: 70 }, color: { value: "#00E5FF" }, shape: { type: "circle" }, opacity: { value: 0.45 }, size: { value: 2 }, move: { speed: 1 } },
-    interactivity: { events: { onhover: { enable: true, mode: "repulse" } } }
+    particles: { 
+      number: { value: 70 }, 
+      color: { value: "#00E5FF" }, 
+      shape: { type: "circle" }, 
+      opacity: { value: 0.45 }, 
+      size: { value: 2 }, 
+      move: { speed: 1 } 
+    },
+    interactivity: { 
+      events: { 
+        onhover: { enable: true, mode: "repulse" } 
+      } 
+    }
   });
 </script>
 </body>

@@ -57,7 +57,6 @@ for user, user_notes in notes_data.items():
         for title in user_notes.keys():
             trie.insert(title)
 
-
 @app.route('/')
 def home():
     return render_template('index.html')
@@ -222,5 +221,6 @@ def ask_question():
         return jsonify({"status": "success", "results": [], "message": "No related notes found."})
 
     return jsonify({"status": "success", "results": results})
+
 if __name__ == '__main__':
     app.run(debug=True)
