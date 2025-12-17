@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Ask a Question - Brain Memory Organizer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+  <style>
+    *{box-sizing:border-box;font-family:'Poppins',sans-serif}
+    body{margin:0;background:radial-gradient(circle at top left,#071226,#000);color:#e8eef6;min-height:100vh}
+    #particles-js{position:fixed;inset:0;z-index:-2}
+    body::before{content:"";position:fixed;inset:0;background:linear-gradient(-45deg,#00102b,#001f3f,#150050,#000);background-size:400% 400%;animation:gradientShift 12s ease infinite;opacity:.6;z-index:-3}
+    @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    nav{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:14px 30px;background:rgba(4,8,15,0.7);z-index:1000}
+    .logo{color:#00E5FF;font-weight:700;display:flex;align-items:center;gap:10px}
+    .nav-links a{color:#e8eef6;margin-left:18px;text-decoration:none}
+    .nav-spacer{height:92px}
+
+    .container{max-width:840px;margin:80px auto;padding:30px;border-radius:14px;background:rgba(255,255,255,0.03);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.03)}
+    h2{color:#00E5FF;margin:0 0 12px;text-align:center}
+    textarea{width:100%;padding:16px;border-radius:12px;border:none;background:rgba(255,255,255,0.06);color:#e8eef6;outline:none;min-height:140px}
+    #answerBox{margin-top:18px;background:rgba(255,255,255,0.02);padding:16px;border-radius:10px;display:none}
+    button{display:block;margin:16px auto 0;padding:12px 22px;border-radius:12px;border:none;background:linear-gradient(90deg,#00E5FF,#7b2ff7);color:#000;font-weight:700;cursor:pointer}
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+  <nav>
+    <div class="logo"><img src="https://img.icons8.com/fluency/96/brain.png" style="width:40px"/><span>Brain Memory</span></div>
+    <div class="nav-links"><a href="/">Home</a><a href="/notes">View Notes</a><a href="/auth">Login</a></div>
+  </nav>
+  <div class="nav-spacer"></div>
+
+  <div class="container">
+    <h2>Ask a Question 🤔</h2>
+    <textarea id="questionInput" placeholder="Type your question here..."></textarea>
+    <button onclick="askQuestion()">Search Answer</button>
+    <div id="answerBox"></div>
+  </div>
+
+<script>
+  particlesJS("particles-js", { particles:{ number:{ value:50}, color:{value:"#00E5FF"}, shape:{type:"circle"}, opacity:{value:0.45}, size:{value:2}, move:{speed:1}}, interactivity:{events:{onhover:{enable:true,mode:"repulse"}}}});
+
+  async function askQuestion(){
+    const q = document.getElementById('questionInput').value.trim();
+    const box = document.getElementById('answerBox');
+    if(!q){ alert('Please enter a question!'); return; }
+    box.style.display = 'block';
+    box.innerHTML = '<em>Thinking... 🧠</em>';
+    try {
+      const res = await fetch('/ask_question', {
+        method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include',
+        body: JSON.stringify({ question: q })
+      });
+      const data = await res.json();
+      if(data.status === 'error'){ box.innerHTML = `<span style="color:#ff7b7b;">${data.message}</span>`; return; }
+      const results = data.results || [];
+      if(results.length === 0){
+        box.innerHTML = `<p style="color:#aaa">No related notes found for "<strong>${escapeHtml(q)}</strong>"</p>`;
+        return;
+      }
+      box.innerHTML = `<h3 style="color:#00E5FF">🧠 Related Notes</h3>`;
+      results.forEach(r=>{
+        const el = document.createElement('div');
+        el.style.margin='12px 0'; el.style.padding='12px'; el.style.borderRadius='8px'; el.style.background='rgba(255,255,255,0.02)';
+        el.innerHTML = `<strong style="color:#00E5FF">${escapeHtml(r.title)}</strong><div style="margin-top:6px;color:#dfe6f8">${escapeHtml(r.content)}</div>`;
+        box.appendChild(el);
+      });
+    } catch(err){
+      console.error(err); box.innerHTML = '⚠️ Error connecting to server';
+    }
+  }
+  function escapeHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
+</script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Brain Inspired Memory Organizer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+  <style>
+    * { box-sizing: border-box; font-family: "Poppins", sans-serif; scroll-behavior: smooth; }
+    :root {
+      --neon: #00E5FF;
+      --neon-2: #7b2ff7;
+      --bg-dark: #070711;
+      --card-bg: rgba(255,255,255,0.04);
+    }
+
+    body {
+      margin: 0;
+      color: #e8eef6;
+      background: radial-gradient(circle at 10% 10%, #071226 0%, #051025 30%, #000011 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* animated gradient layer */
+    #particles-js { position: fixed; inset: 0; z-index: -2; }
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      background: linear-gradient(-45deg, #00102b, #001f3f, #1a0050, #000);
+      background-size: 400% 400%;
+      animation: gradientShift 14s ease infinite;
+      opacity: 0.55;
+      z-index: -3;
+    }
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; }
+    }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      display:flex; align-items:center; justify-content:space-between;
+      padding: 14px 34px;
+      background: rgba(4,8,15,0.7);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      z-index: 1000;
+    }
+    .nav-left { display:flex; gap:12px; align-items:center; }
+    .nav-left img { width:44px; height:44px; object-fit:contain; filter: drop-shadow(0 0 12px var(--neon)); }
+    .nav-left h2 { margin:0; color:var(--neon); text-shadow:0 0 10px var(--neon); font-size:1.25rem; }
+    .nav-right { display:flex; gap:20px; align-items:center; }
+    .nav-right a, .nav-right button { color:#e8eef6; text-decoration:none; background:none; border:none; cursor:pointer; font-weight:600; }
+    .nav-right a:hover, .nav-right button:hover { color: var(--neon); text-shadow:0 0 8px var(--neon); }
+
+    .profile-pic {
+      width:42px; height:42px; border-radius:50%; object-fit:cover;
+      border: 2px solid var(--neon); transition: transform .25s, box-shadow .25s;
+    }
+    .profile-pic:hover { transform:scale(1.05); box-shadow:0 0 14px var(--neon); }
+
+    .nav-spacer { height: 92px; }
+
+    /* HERO */
+    .hero { text-align:center; padding: 120px 20px 80px; }
+    .hero h1 {
+      font-size: 3.2rem; color: var(--neon); margin:0 0 18px;
+      text-shadow: 0 0 30px rgba(0,230,255,0.25);
+    }
+    .hero p { max-width:920px; margin: 0 auto 26px; color:#c6d6ee; font-size:1.05rem; }
+    .hero .btn-row { display:flex; gap:18px; justify-content:center; margin-top:12px; }
+    .btn {
+      border:none; padding:12px 22px; border-radius:12px; font-weight:700; cursor:pointer;
+      background: linear-gradient(90deg, var(--neon), var(--neon-2)); color:#000;
+      box-shadow:0 10px 30px rgba(0,230,255,0.12);
+      transition: transform .22s, box-shadow .22s;
+    }
+    .btn:hover { transform: translateY(-6px); box-shadow:0 16px 40px rgba(0,230,255,0.18); }
+
+    /* FEATURES */
+    .features { display:flex; gap:20px; justify-content:center; flex-wrap:wrap; padding:40px 20px; }
+    .feature {
+      background: var(--card-bg); border-radius:16px; padding:24px; width:260px; min-height:120px;
+      border:1px solid rgba(255,255,255,0.03);
+      box-shadow:0 6px 18px rgba(0,0,0,0.4);
+    }
+    .feature h3 { color:var(--neon); margin:0 0 8px; font-size:1.1rem; }
+
+    footer { text-align:center; padding:28px 20px; color:#9fb0d5; }
+
+    /* responsive */
+    @media (max-width:720px){
+      .hero h1 { font-size:2rem; }
+      .nav-right { gap:12px; }
+    }
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+
+  <nav>
+    <div class="nav-left">
+      <img src="https://img.icons8.com/fluency/96/brain.png" alt="logo">
+      <h2>Brain Memory</h2>
+    </div>
+    <div class="nav-right" id="navActions">
+      <!-- filled by JS -->
+    </div>
+  </nav>
+
+  <div class="nav-spacer"></div>
+
+  <section class="hero">
+    <h1>Welcome to Brain Inspired Memory Organizer</h1>
+    <p>Organize your thoughts, notes, and memories like your brain does — fast, smart, and structured.</p>
+    <div class="btn-row">
+      <button class="btn" onclick="location.href='/create_note'">Create Note</button>
+      <button class="btn" onclick="location.href='/notes'">View Notes</button>
+      <button class="btn" onclick="location.href='/question'">Ask Question</button>
+    </div>
+  </section>
+
+  <section class="features">
+    <div class="feature"><h3>⚡ Fast Search</h3><p>Trie powered prefix search for instant recall.</p></div>
+    <div class="feature"><h3>🧠 Smart Match</h3><p>Semantic-style matching for meaningful question answers.</p></div>
+    <div class="feature"><h3>🔐 Secure</h3><p>Session-based authentication for your notes.</p></div>
+  </section>
+
+  <footer>© 2025 Brain Inspired Memory Organizer</footer>
+
+<script>
+  /* navbar loader - uses same localStorage user as before */
+  function loadNavbar(){
+    const nav = document.getElementById('navActions');
+    const u = JSON.parse(localStorage.getItem('user'));
+    if(u){
+      nav.innerHTML = `
+        <a href="/">Home</a>
+        <a href="/notes"><img src="${u.profile_pic}" class="profile-pic" alt="profile"/></a>
+        <button onclick="logout()">Logout</button>
+      `;
+    } else {
+      nav.innerHTML = `<a href="/">Home</a><a href="/auth">Login / Register</a>`;
+    }
+  }
+  function logout(){
+    fetch('/auth/logout', { method: 'POST', credentials: 'include' })
+      .finally(()=> {
+        localStorage.removeItem('user');
+        location.href = '/auth';
+      });
+  }
+  loadNavbar();
+
+  /* particles background */
+  particlesJS("particles-js", {
+    particles: { number: { value: 70 }, color: { value: "#00E5FF" }, shape: { type: "circle" }, opacity: { value: 0.45 }, size: { value: 2 }, move: { speed: 1 } },
+    interactivity: { events: { onhover: { enable: true, mode: "repulse" } } }
+  });
+</script>
+</body>
+</html>

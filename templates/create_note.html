@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Create Note - Brain Memory Organizer</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+    <style>
+      * {
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+      }
+      body {
+        margin: 0;
+        background: radial-gradient(circle at top left, #071226, #000);
+        color: #e8eef6;
+        min-height: 100vh;
+      }
+      #particles-js {
+        position: fixed;
+        inset: 0;
+        z-index: -2;
+      }
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: linear-gradient(-45deg, #00102b, #001f3f, #150050, #000);
+        background-size: 400% 400%;
+        animation: gradientShift 12s ease infinite;
+        opacity: 0.6;
+        z-index: -3;
+      }
+      @keyframes gradientShift {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 30px;
+        background: rgba(4, 8, 15, 0.7);
+        z-index: 1000;
+      }
+      .logo {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        color: #00e5ff;
+        font-weight: 700;
+      }
+      .nav-links a {
+        color: #e8eef6;
+        text-decoration: none;
+        margin-left: 18px;
+      }
+      .nav-spacer {
+        height: 84px;
+      }
+      
+      .note-box {
+        max-width: 700px;
+        margin: 80px auto;
+        padding: 28px;
+        border-radius: 14px;
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.03);
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 14px;
+        border-radius: 10px;
+        border: none;
+        background: rgba(255, 255, 255, 0.06);
+        color: #e8eef6;
+        margin: 10px 0;
+        outline: none;
+      }
+      button {
+        padding: 12px 18px;
+        border-radius: 10px;
+        border: none;
+        background: linear-gradient(90deg, #00e5ff, #7b2ff7);
+        font-weight: 700;
+        color: #000;
+        cursor: pointer;
+      }
+      .back-btn {
+        background: #444;
+        color: #fff;
+        margin-left: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="particles-js"></div>
+
+    <nav>
+      <div class="logo">
+        <img src="https://img.icons8.com/fluency/96/brain.png" style="width:40px;height:40px" /><span>Brain Memory</span>
+      </div>
+      <div class="nav-links">
+        <a href="/">Home</a><a href="/notes">View Notes</a><a href="/auth">Login</a>
+      </div>
+    </nav>
+    <div class="nav-spacer"></div>
+
+    <div class="note-box">
+      <h2 style="color:#00E5FF;margin:0 0 12px">Create a New Note 📝</h2>
+      <input id="noteTitle" placeholder="Enter note title" />
+      <textarea id="noteContent" rows="6" placeholder="Write your note..."></textarea>
+      <div style="display:flex;align-items:center;justify-content:center;margin-top:10px">
+        <button onclick="saveNote()">Save Note</button>
+        <button class="back-btn" onclick="location.href='/notes'">Back to Notes</button>
+      </div>
+    </div>
+
+    <script>
+      particlesJS('particles-js', { particles: { number: { value: 50 }, color: { value: '#00E5FF' }, shape: { type: 'circle' }, opacity: { value: 0.45 }, size: { value: 2 }, move: { speed: 1 } }, interactivity: { events: { onhover: { enable: true, mode: 'repulse' } } } })
+      
+      async function saveNote() {
+        const title = document.getElementById('noteTitle').value.trim()
+        const content = document.getElementById('noteContent').value.trim()
+        if (!title || !content) {
+          alert('Please fill out both fields!')
+          return
+        }
+        const res = await fetch('/save_note', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ title, content })
+        })
+        const data = await res.json()
+        alert(data.message)
+        if (data.status === 'success') location.href = '/notes'
+      }
+    </script>
+  </body>
+</html>

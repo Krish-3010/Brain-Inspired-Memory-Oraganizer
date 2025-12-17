@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Login / Register</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+  <style>
+    *{box-sizing:border-box;font-family:'Poppins',sans-serif}
+    body{margin:0;background:radial-gradient(circle at top left,#071226,#000);color:#e8eef6;min-height:100vh}
+    #particles-js{position:fixed;inset:0;z-index:-2}
+    body::before{content:"";position:fixed;inset:0;background:linear-gradient(-45deg,#00102b,#001f3f,#150050,#000);background-size:400% 400%;animation:gradientShift 12s ease infinite;opacity:.6;z-index:-3}
+    @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    nav{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:14px 30px;background:rgba(4,8,15,0.7);backdrop-filter:blur(10px);z-index:1000}
+    .nav-left{display:flex;gap:10px;align-items:center}
+    .nav-left img{width:40px;height:40px;filter:drop-shadow(0 0 10px #00e5ff)}
+    .nav-left h2{margin:0;color:#00E5FF}
+    .nav-links a{color:#e8eef6;text-decoration:none;margin-left:24px}
+    .container{max-width:420px;margin:120px auto;padding:28px;border-radius:14px;background:rgba(255,255,255,0.03);backdrop-filter:blur(8px);box-shadow:0 10px 30px rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.04)}
+    h2{color:#00E5FF;margin-bottom:14px}
+    input{width:100%;padding:12px;border-radius:10px;border:none;background:rgba(255,255,255,0.06);color:#e8eef6;margin:8px 0;font-size:1rem;outline:none}
+    button{width:100%;padding:12px;border-radius:10px;border:none;font-weight:700;background:linear-gradient(90deg,#00E5FF,#7b2ff7);color:#000;margin-top:12px;cursor:pointer;box-shadow:0 10px 30px rgba(0,230,255,0.08)}
+    .toggle{color:#cddbf1;margin-top:12px;font-size:.95rem}
+    .toggle span{color:#00E5FF;cursor:pointer}
+    footer{padding:30px;text-align:center;color:#9fb0d5}
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+
+  <nav>
+    <div class="nav-left"><img src="https://img.icons8.com/fluency/96/brain.png" alt="logo"><h2>Brain Memory</h2></div>
+    <div class="nav-links"><a href="/">Home</a></div>
+  </nav>
+
+  <div class="container" id="form-container">
+    <div id="login-form">
+      <h2>Welcome Back 👋</h2>
+      <input id="loginEmail" placeholder="Email" type="email"/>
+      <input id="loginPassword" placeholder="Password" type="password"/>
+      <button onclick="login()">Login</button>
+      <p class="toggle">Don't have an account? <span onclick="toggleForms()">Register here</span></p>
+    </div>
+
+    <div id="register-form" style="display:none;">
+      <h2>Create Account 🪶</h2>
+      <input id="regUsername" placeholder="Username"/>
+      <input id="regEmail" placeholder="Email" type="email"/>
+      <input id="regPhone" placeholder="Phone Number"/>
+      <input id="regPassword" placeholder="Password" type="password"/>
+      <button onclick="register()">Register</button>
+      <p class="toggle">Already have an account? <span onclick="toggleForms()">Login here</span></p>
+    </div>
+  </div>
+
+<script>
+  function toggleForms(){
+    const l = document.getElementById('login-form'), r = document.getElementById('register-form');
+    if(l.style.display === 'none'){ l.style.display = 'block'; r.style.display = 'none'; }
+    else { l.style.display = 'none'; r.style.display = 'block'; }
+  }
+
+  async function register(){
+    const username = document.getElementById('regUsername').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const phone = document.getElementById('regPhone').value.trim();
+    const password = document.getElementById('regPassword').value.trim();
+    const res = await fetch('/auth/register', {
+      method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include',
+      body: JSON.stringify({ username, email, phone, password })
+    });
+    const data = await res.json();
+    alert(data.message);
+    if(data.status === 'success') toggleForms();
+  }
+
+  async function login(){
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value.trim();
+    const res = await fetch('/auth/login', {
+      method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include',
+      body: JSON.stringify({ email, password })
+    });
+    const data = await res.json();
+    alert(data.message);
+    if(data.status === 'success'){
+      localStorage.setItem('user', JSON.stringify(data.user));
+      location.href = '/';
+    }
+  }
+</script>
+
+<footer>© 2025 Brain Inspired Memory Organizer</footer>
+</body>
+</html>

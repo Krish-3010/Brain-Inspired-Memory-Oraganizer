@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Your Notes - Brain Memory Organizer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+  <style>
+    *{box-sizing:border-box;font-family:'Poppins',sans-serif}
+    body{margin:0;background:radial-gradient(circle at top left,#071226,#000);color:#e8eef6;min-height:100vh}
+    #particles-js{position:fixed;inset:0;z-index:-2}
+    body::before{content:"";position:fixed;inset:0;background:linear-gradient(-45deg,#00102b,#001f3f,#150050,#000);background-size:400% 400%;animation:gradientShift 12s ease infinite;opacity:.6;z-index:-3}
+    @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+    nav{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:14px 30px;background:rgba(4,8,15,0.7);z-index:1000}
+    .logo{color:#00E5FF;font-weight:700;display:flex;align-items:center;gap:10px}
+    .nav-links a{color:#e8eef6;margin-left:18px;text-decoration:none}
+    .nav-links button{color:#e8eef6;margin-left:18px;text-decoration:none}
+    .nav-spacer{height:92px}
+
+    .search-wrap{display:flex;justify-content:center;margin:22px 16px}
+    #searchBox{width:60%;padding:14px;border-radius:12px;border:none;background:rgba(255,255,255,0.06);outline:none;color:#e8eef6;box-shadow:0 8px 30px rgba(0,0,0,0.5)}
+    .notes-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px;width:88%;margin:20px auto 120px;align-items:start}
+    .note-card{background:rgba(255,255,255,0.035);padding:18px;border-radius:14px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
+    .note-title{color:#00E5FF;font-weight:700;margin-bottom:10px}
+    .note-content{color:#dfe6f8;margin-bottom:10px}
+    .delete-btn{background:#ff6b6b;border:none;color:#fff;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:700}
+    footer{padding:30px;text-align:center;color:#9fb0d5}
+  </style>
+</head>
+<body>
+  <div id="particles-js"></div>
+
+  <nav>
+    <div class="logo"><img src="https://img.icons8.com/fluency/96/brain.png" style="width:40px"/><span>Brain Memory</span></div>
+    <div class="nav-links"><a href="/">Home</a><a href="/create_note">Create Note</a><button onclick="logout()">Logout</button></div>
+  </nav>
+  <div class="nav-spacer"></div>
+
+  <div class="search-wrap">
+    <input id="searchBox" placeholder="Search your notes..." onkeyup="searchNotes()" />
+  </div>
+
+  <div id="notesContainer" class="notes-container"></div>
+
+<script>
+  particlesJS("particles-js", { particles:{ number:{ value:60 }, color:{value:"#00E5FF"}, shape:{type:"circle"}, opacity:{value:0.45}, size:{value:2}, move:{speed:1} }, interactivity:{ events:{ onhover:{ enable:true, mode:"repulse" } } } });
+
+  async function loadNotes(){
+    const res = await fetch('/get_notes', { credentials: 'include' });
+    const data = await res.json();
+    const container = document.getElementById('notesContainer');
+    container.innerHTML = '';
+    if(!data.notes || Object.keys(data.notes).length === 0){
+      container.innerHTML = '<p style="color:#cbd8f0;text-align:center;width:100%;">No notes found yet.</p>';
+      return;
+    }
+    for(const [title, content] of Object.entries(data.notes)){
+      const card = document.createElement('div'); card.className='note-card';
+      card.innerHTML = `<div class="note-title">${escapeHtml(title)}</div>
+                        <div class="note-content">${escapeHtml(content)}</div>
+                        <button class="delete-btn" onclick="deleteNote('${encodeURIComponent(title)}')">🗑 Delete</button>`;
+      container.appendChild(card);
+    }
+  }
+
+  function logout(){
+    fetch('/auth/logout', { method: 'POST', credentials: 'include' })
+      .finally(()=> {
+        localStorage.removeItem('user');
+        location.href = '/auth';
+      });
+  }
+  async function deleteNote(encodedTitle){
+    const title = decodeURIComponent(encodedTitle);
+    if(!confirm(`Delete "${title}"?`)) return;
+    const res = await fetch('/delete_note', {
+      method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include',
+      body: JSON.stringify({ title })
+    });
+    const data = await res.json();
+    alert(data.message);
+    if(data.status === 'success') loadNotes();
+  }
+
+  async function searchNotes(){
+    const q = document.getElementById('searchBox').value.trim();
+    const container = document.getElementById('notesContainer');
+    if(!q){ loadNotes(); return; }
+    const res = await fetch(`/search_notes?q=${encodeURIComponent(q)}`, { credentials:'include' });
+    const data = await res.json();
+    container.innerHTML = '';
+    if(!data.results || Object.keys(data.results).length === 0){
+      container.innerHTML = '<p style="color:#cbd8f0;text-align:center;width:100%;">No matching notes found.</p>'; return;
+    }
+    for(const [title, content] of Object.entries(data.results)){
+      const card = document.createElement('div'); card.className='note-card';
+      card.innerHTML = `<div class="note-title">${escapeHtml(title)}</div>
+                        <div class="note-content">${escapeHtml(content)}</div>
+                        <button class="delete-btn" onclick="deleteNote('${encodeURIComponent(title)}')">🗑 Delete</button>`;
+      container.appendChild(card);
+    }
+  }
+
+  function escapeHtml(s){ return (s||'').toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;'); }
+
+  // initial load
+  loadNotes();
+</script>
+<footer>© 2025 Brain Inspired Memory Organizer
