@@ -17,6 +17,28 @@ This project focuses on **fast search, structured storage, and intelligent recal
 
 ---
 
+## 📸 Screenshots
+
+### 🏠 Home Page
+![Home Page](Screenshots/Home.jpeg)
+
+### 🔐 Login Page
+![Login Page](Screenshots/Login.jpeg)
+
+### 📝 Register Page
+![Register Page](Screenshots/Register.jpeg)
+
+### ➕ Create Notes
+![Create Notes](Screenshots/Create_notes.jpeg)
+
+### 📖 View Notes
+![View Notes](Screenshots/View_Notes.jpeg)
+
+### ❓ Question Page
+![Question Page](Screenshots/Question.jpeg)
+
+--- 
+
 ## 🛠️ Tech Stack
 
 - **Frontend:** HTML, CSS, JavaScript
@@ -28,37 +50,37 @@ This project focuses on **fast search, structured storage, and intelligent recal
 
 ## ▶️ How to Run the Project
 
-Follow the steps below to run this project locally:
+Follow the steps and paste the given commonds in the commond prompt to run this project locally:
 
 ### 1️⃣ Clone the Repository
 
-git clone https://github.com/Krish-3010/Brain-Inspired-Memory-Oraganizer
+`git clone https://github.com/Krish-3010/Brain-Inspired-Memory-Oraganizer`
 
 ### 2️⃣ Navigate to Project Directory
 
-cd your-repo-name
+`cd Brain-Inspired-Memory-Oraganizer`
 
 ### 3️⃣ Create Virtual Environment (Optional but Recommended)
 
-python -m venv venv
+`python -m venv venv`
 
 ### 4️⃣ Activate Virtual Environment
 
 - **Windows:**
 
-venv\Scripts\activate
+`venv\Scripts\activate`
 
 - **Mac/Linux:**
 
-source venv/bin/activate
+`source venv/bin/activate`
 
 ### 5️⃣ Install Required Dependencies
 
-pip install -r requirements.txt
+`pip install -r requirements.txt`
 
 ### 6️⃣ Run the Flask Application
 
-python app.py
+`python app.py`
 
 ### 7️⃣ Open in Browser
 
@@ -69,9 +91,10 @@ http://127.0.0.1:5000/
 ### 🔐 Security Considerations
 
 - Sensitive files (such as cache files and local JSON data) should not be committed to GitHub
-- .gitignore is used to prevent accidental exposure of: -**pycache**/
-  -.env
-  -Local JSON or temporary files
+- `.gitignore` is used to prevent accidental exposure of:
+  - `_pycache_`
+  - `.env`
+  - Local JSON or temporary files
 
 ---
 
@@ -80,29 +103,28 @@ http://127.0.0.1:5000/
 This project is open for collaboration 🚀
 
 Contributions are welcome in the form of:
--Feature enhancements
--Bug fixes
--UI/UX improvements
--Performance optimizations
--Documentation improvements
+- Feature enhancements
+- Bug fixes
+- UI/UX improvements
+- Performance optimizations
+- Documentation improvements
 
 How to Contribute
--1. Fork the repository
--2. Create a new branch
--3. Make your changes
--4. Submit a Pull Request
+- Fork the repository
+- Create a new branch
+- Make your changes
+- Submit a Pull Request
 
 ---
 
 ### 👤 Author
 
--**Krish Mojidra**
-🎓 Student At Nirma University | 💻 Aspiring Software Engineer
+- **Krish Mojidra**
+
+  🎓 Student At Nirma University | 💻 Aspiring Software Engineer
 
 ---
 
 ### ⭐ Support
 
 If you find this project helpful Give it a ⭐ on GitHub and Share feedback or suggestions.
-
----
