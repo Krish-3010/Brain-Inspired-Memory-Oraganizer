@@ -32,7 +32,7 @@ class Trie:
         return list(set(node.titles))  
 
 app = Flask(__name__)
-app.secret_key = 'supersecretkey'
+app.secret_key = 'supersecretkey'  # TODO: move to env var in production
 app.register_blueprint(auth)
 CORS(app, supports_credentials=True)
 
@@ -78,6 +78,12 @@ def notes_page():
 @app.route('/create_note')
 def create_note_page():
     return render_template('create_note.html')
+
+@app.route('/profile')
+def profile_page():
+    if 'user' not in session:
+        return redirect(url_for('auth_page'))
+    return render_template('profile.html')
 
 @app.route('/save_note', methods=['POST'])
 def save_note():
@@ -161,7 +167,7 @@ def delete_note():
 @app.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('auth.html'))  
+    return redirect(url_for('auth.auth_page'))
 
 @app.route('/ask_question', methods=['POST'])
 def ask_question():

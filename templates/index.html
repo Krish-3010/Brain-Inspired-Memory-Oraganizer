@@ -1,224 +1,254 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Brain Inspired Memory Organizer — Store, search, and recall your notes in a wobbly hand-sketched digital notebook."/>
   <title>Brain Inspired Memory Organizer</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  
+  <link rel="stylesheet" href="/static/style.css">
 
   <style>
-    * { box-sizing: border-box; font-family: "Poppins", sans-serif; scroll-behavior: smooth; }
-    :root {
-      --neon: #00E5FF;
-      --neon-2: #7b2ff7;
-      --bg-dark: #070711;
-      --card-bg: rgba(255,255,255,0.04);
+    /* Page Specific Hand-Drawn Styles */
+    .hero {
+      text-align: center;
+      padding: 60px 16px 40px;
+      position: relative;
     }
 
-    body {
-      margin: 0;
-      color: #e8eef6;
-      background: radial-gradient(circle at 10% 10%, #071226 0%, #051025 30%, #000011 100%);
-      min-height: 100vh;
-      overflow-x: hidden;
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background-color: var(--bg-postit);
+      border: 3px solid var(--color-border);
+      border-radius: var(--wobbly);
+      padding: 6px 16px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      box-shadow: 3px 3px 0px var(--color-border);
+      transform: rotate(-1.5deg);
     }
 
-    /* animated gradient layer */
-    #particles-js { position: fixed; inset: 0; z-index: -2; }
-    body::before {
-      content: "";
-      position: fixed; inset: 0;
-      background: linear-gradient(-45deg, #00102b, #001f3f, #1a0050, #000);
-      background-size: 400% 400%;
-      animation: gradientShift 14s ease infinite;
-      opacity: 0.55;
-      z-index: -3;
-    }
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; } 
-      50% { background-position: 100% 50%; } 
-      100% { background-position: 0% 50%; }
+    .hero-title {
+      font-size: clamp(2.4rem, 6vw, 3.8rem);
+      line-height: 1.15;
+      margin-bottom: 20px;
     }
 
-    /* NAV */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0;
-      display:flex; align-items:center; justify-content:space-between;
-      padding: 14px 34px;
-      background: rgba(4,8,15,0.7);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-      z-index: 1000;
-    }
-    .nav-left { display:flex; gap:12px; align-items:center; }
-    .nav-left img { width:44px; height:44px; object-fit:contain; filter: drop-shadow(0 0 12px var(--neon)); }
-    .nav-left h2 { margin:0; color:var(--neon); text-shadow:0 0 10px var(--neon); font-size:1.25rem; }
-    .nav-right { display:flex; gap:20px; align-items:center; }
-    .nav-right a, .nav-right button { 
-      color:#e8eef6; 
-      text-decoration:none; 
-      background:none; 
-      border:none; 
-      cursor:pointer; 
-      font-weight:600; 
-    }
-    .nav-right a:hover, .nav-right button:hover { 
-      color: var(--neon); 
-      text-shadow:0 0 8px var(--neon); 
+    .hero-title span {
+      background-color: var(--accent-red);
+      color: #ffffff;
+      padding: 2px 10px;
+      border-radius: var(--wobbly-md);
+      display: inline-block;
+      transform: rotate(1deg);
     }
 
-    .profile-pic {
-      width:42px; height:42px; border-radius:50%; object-fit:cover;
-      border: 2px solid var(--neon); transition: transform .25s, box-shadow .25s;
-    }
-    .profile-pic:hover { transform:scale(1.05); box-shadow:0 0 14px var(--neon); }
-
-    .nav-spacer { height: 92px; }
-
-    /* HERO */
-    .hero { text-align:center; padding: 120px 20px 80px; }
-    .hero h1 {
-      font-size: 3.2rem; color: var(--neon); margin:0 0 18px;
-      text-shadow: 0 0 30px rgba(0,230,255,0.25);
-    }
-    .hero p { 
-      max-width:920px; 
-      margin: 0 auto 26px; 
-      color:#c6d6ee; 
-      font-size:1.05rem; 
-    }
-    .hero .btn-row { 
-      display:flex; 
-      gap:18px; 
-      justify-content:center; 
-      margin-top:12px; 
-    }
-    .btn {
-      border:none; 
-      padding:12px 22px; 
-      border-radius:12px; 
-      font-weight:700; 
-      cursor:pointer;
-      background: linear-gradient(90deg, var(--neon), var(--neon-2)); 
-      color:#000;
-      box-shadow:0 10px 30px rgba(0,230,255,0.12);
-      transition: transform .22s, box-shadow .22s;
-    }
-    .btn:hover { 
-      transform: translateY(-6px); 
-      box-shadow:0 16px 40px rgba(0,230,255,0.18); 
+    .hero-desc {
+      max-width: 620px;
+      margin: 0 auto 36px;
+      font-size: 1.3rem;
+      opacity: 0.9;
     }
 
-    /* FEATURES */
-    .features { 
-      display:flex; 
-      gap:20px; 
-      justify-content:center; 
-      flex-wrap:wrap; 
-      padding:40px 20px; 
-    }
-    .feature {
-      background: var(--card-bg); 
-      border-radius:16px; 
-      padding:24px; 
-      width:260px; 
-      min-height:120px;
-      border:1px solid rgba(255,255,255,0.03);
-      box-shadow:0 6px 18px rgba(0,0,0,0.4);
-    }
-    .feature h3 { 
-      color:var(--neon); 
-      margin:0 0 8px; 
-      font-size:1.1rem; 
+    .hero-actions {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
     }
 
-    footer { 
-      text-align:center; 
-      padding:28px 20px; 
-      color:#9fb0d5; 
+    /* Stats Grid */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 24px;
+      margin: 40px auto 60px;
+      max-width: 800px;
     }
 
-    /* responsive */
-    @media (max-width:720px){
-      .hero h1 { font-size:2rem; }
-      .nav-right { gap:12px; }
+    .stat-card {
+      background-color: var(--bg-card);
+      border: 3px solid var(--color-border);
+      border-radius: var(--wobbly-card);
+      padding: 20px;
+      text-align: center;
+      box-shadow: 4px 4px 0px var(--color-border);
+      transform: rotate(calc(var(--r, 0) * 1deg));
+    }
+
+    .stat-card:hover {
+      transform: rotate(0deg) scale(1.02);
+    }
+
+    .stat-num {
+      font-family: var(--font-heading);
+      font-size: 2.2rem;
+      color: var(--accent-blue);
+      font-weight: 700;
+    }
+
+    .stat-label {
+      font-size: 1.1rem;
+      color: var(--fg-lead);
+      opacity: 0.8;
+      margin-top: 4px;
+    }
+
+    /* Features Layout */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px;
+      margin-bottom: 60px;
+    }
+
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--wobbly-circle);
+      border: 3px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      background-color: var(--bg-muted);
+      margin-bottom: 16px;
+      color: var(--fg-lead);
+    }
+
+    .feature-card:nth-child(2) .feature-icon {
+      background-color: var(--bg-postit);
+    }
+
+    .feature-card:nth-child(3) .feature-icon {
+      background-color: rgba(255, 77, 77, 0.15);
+    }
+
+    footer {
+      text-align: center;
+      padding: 40px 16px;
+      border-top: 3px dashed var(--color-border);
+      margin-top: 60px;
+      font-size: 1.1rem;
+      opacity: 0.8;
+    }
+
+    footer span {
+      color: var(--accent-red);
+      font-weight: 700;
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <div id="particles-js"></div>
-
-  <nav>
-    <div class="nav-left">
-      <img src="https://img.icons8.com/fluency/96/brain.png" alt="logo">
-      <h2>Brain Memory</h2>
-    </div>
-    <div class="nav-right" id="navActions">
-      <!-- filled by JS -->
-    </div>
-  </nav>
+  <!-- Floating Header -->
+  <div class="nav-wrapper">
+    <nav>
+      <a class="nav-logo" href="/">
+        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+        </svg>
+        <span>Brain Organizer</span>
+      </a>
+      <div class="nav-links" id="navLinks"></div>
+    </nav>
+  </div>
 
   <div class="nav-spacer"></div>
 
-  <section class="hero">
-    <h1>Welcome to Brain Inspired Memory Organizer</h1>
-    <p>Organize your thoughts, notes, and memories like your brain does — fast, smart, and structured.</p>
-    <div class="btn-row">
-      <button class="btn" onclick="location.href='/create_note'">Create Note</button>
-      <button class="btn" onclick="location.href='/notes'">View Notes</button>
-      <button class="btn" onclick="location.href='/question'">Ask Question</button>
+  <!-- Landing Gateway Container -->
+  <div class="page-wrap">
+    
+    <!-- Hero Block -->
+    <section class="hero">
+      <div class="hero-badge">
+        <span>🧠</span> Brain Inspired Memory Organizer
+      </div>
+      
+      <h1 class="hero-title">
+        Organize Memories.<br>
+        <span>Like Your Brain Does.</span>
+      </h1>
+      
+      <p class="hero-desc">
+        A private note planner written inside a wobbly sketchbook. Capture your daily memories, index notes quickly, and query details directly from your brain space.
+      </p>
+      
+      <div class="hero-actions">
+        <button class="btn" onclick="location.href='/create_note'">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+          Write A Note
+        </button>
+        <button class="btn btn-secondary" onclick="location.href='/notes'">
+          My Notes
+        </button>
+        <button class="btn btn-secondary" onclick="location.href='/question'">
+          Consult Brain
+        </button>
+      </div>
+    </section>
+
+    <!-- Stats row with wobbly angles -->
+    <div class="stats-row" id="statsRow">
+      <div class="stat-card" style="--r: -2.5">
+        <div class="stat-num" id="noteCount">—</div>
+        <div class="stat-label">Notes Stored</div>
+      </div>
+      <div class="stat-card" style="--r: 1.8">
+        <div class="stat-num">Instant</div>
+        <div class="stat-label">Search Speed</div>
+      </div>
+      <div class="stat-card" style="--r: -1.2">
+        <div class="stat-num">Chalk</div>
+        <div class="stat-label">Light &amp; Dark Theme</div>
+      </div>
     </div>
-  </section>
 
-  <section class="features">
-    <div class="feature"><h3>⚡ Fast Search</h3><p>Trie powered prefix search for instant recall.</p></div>
-    <div class="feature"><h3>🧠 Smart Match</h3><p>Semantic-style matching for meaningful question answers.</p></div>
-    <div class="feature"><h3>🔐 Secure</h3><p>Session-based authentication for your notes.</p></div>
-  </section>
+    <!-- Feature Sketch Cards -->
+    <section class="features-grid">
+      <div class="sketch-card feature-card decoration-tape tilt-element">
+        <div class="feature-icon">🔍</div>
+        <h3 style="margin-bottom:10px;">Trie Search</h3>
+        <p>Prefix-based matching filters note titles dynamically as you type. Instant and straight to the point.</p>
+      </div>
 
-  <footer>© 2025 Brain Inspired Memory Organizer</footer>
+      <div class="sketch-card feature-card decoration-tack postit-yellow tilt-element">
+        <div class="feature-icon">🧠</div>
+        <h3 style="margin-bottom:10px;">Smart Q&amp;A</h3>
+        <p>Consult your notes in natural language. The lookup engine maps queries to match your notes instantly.</p>
+      </div>
 
-<script>
-  /* navbar loader - uses same localStorage user as before */
-  function loadNavbar(){
-    const nav = document.getElementById('navActions');
-    const u = JSON.parse(localStorage.getItem('user'));
-    if(u){
-      nav.innerHTML = `
-        <a href="/">Home</a>
-        <a href="/notes"><img src="${u.profile_pic}" class="profile-pic" alt="profile"/></a>
-        <button onclick="logout()">Logout</button>
-      `;
-    } else {
-      nav.innerHTML = `<a href="/">Home</a><a href="/auth">Login / Register</a>`;
+      <div class="sketch-card feature-card decoration-tape tilt-element">
+        <div class="feature-icon">🔒</div>
+        <h3 style="margin-bottom:10px;">Secure Sessions</h3>
+        <p>Flask session mapping protects your note organizer. Private user spaces keep your notes secure.</p>
+      </div>
+    </section>
+
+    <footer>
+      © 2026 Brain Inspired Memory Organizer — Hand-drawn by <span>Krish Mojidra</span>
+    </footer>
+
+  </div>
+
+  <script src="/static/script.js"></script>
+  <script>
+    buildNavbar('home');
+
+    // Load stats count dynamically
+    const user = getUser();
+    if (user) {
+      fetch('/get_notes', { credentials: 'include' })
+        .then(r => r.json())
+        .then(d => {
+          if (d.notes) {
+            document.getElementById('noteCount').textContent = Object.keys(d.notes).length;
+          }
+        }).catch(() => {});
     }
-  }
-  function logout(){
-    fetch('/auth/logout', { method: 'POST', credentials: 'include' })
-      .finally(()=> {
-        localStorage.removeItem('user');
-        location.href = '/auth';
-      });
-  }
-  loadNavbar();
-
-  /* particles background */
-  particlesJS("particles-js", {
-    particles: { 
-      number: { value: 70 }, 
-      color: { value: "#00E5FF" }, 
-      shape: { type: "circle" }, 
-      opacity: { value: 0.45 }, 
-      size: { value: 2 }, 
-      move: { speed: 1 } 
-    },
-    interactivity: { 
-      events: { 
-        onhover: { enable: true, mode: "repulse" } 
-      } 
-    }
-  });
-</script>
+  </script>
 </body>
 </html>

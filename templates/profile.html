@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="Manage your user profile settings in Brain Inspired Memory Organizer."/>
+  <title>Profile Settings — Brain Organizer</title>
+  
+  <link rel="stylesheet" href="/static/style.css">
+
+  <style>
+    .profile-wrap {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 30px 16px 80px;
+    }
+
+    .clipboard-settings {
+      background-color: var(--bg-card);
+      border: 4px solid var(--color-border);
+      border-radius: var(--wobbly-card);
+      padding: 40px 30px 30px;
+      position: relative;
+      box-shadow: 8px 8px 0px var(--color-border);
+    }
+
+    /* Clipboard top clip decoration */
+    .clipboard-settings::before {
+      content: '';
+      position: absolute;
+      top: -16px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 120px;
+      height: 28px;
+      background-color: var(--bg-muted);
+      border: 3px solid var(--color-border);
+      border-radius: 4px 4px 12px 12px;
+      box-shadow: 2px 2px 0px var(--color-border);
+      z-index: 5;
+    }
+
+    /* Avatar management layout */
+    .avatar-settings-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .profile-preview-img {
+      width: 120px;
+      height: 120px;
+      border-radius: var(--wobbly-circle);
+      border: 3px solid var(--color-border);
+      box-shadow: 4px 4px 0px var(--color-border);
+      object-fit: cover;
+    }
+
+    .avatar-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    /* Hidden file chooser input */
+    #avatarFileInput {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header nav links -->
+  <div class="nav-wrapper">
+    <nav>
+      <a class="nav-logo" href="/">
+        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+        </svg>
+        <span>Brain Organizer</span>
+      </a>
+      <div class="nav-links" id="navLinks"></div>
+    </nav>
+  </div>
+
+  <div class="nav-spacer"></div>
+
+  <!-- Main profile settings card -->
+  <div class="profile-wrap">
+    <div class="clipboard-settings">
+      
+      <h2 class="section-title" style="font-size: 1.8rem; margin-bottom: 24px; text-align: center;">Node Settings</h2>
+
+      <!-- Profile image configuration -->
+      <div class="avatar-settings-container">
+        <img id="avatarPreview" src="/static/profile/default.png" class="profile-preview-img" alt="avatar profile">
+        
+        <div class="avatar-actions">
+          <button class="btn btn-sm" onclick="triggerFileInput()">Choose Photo</button>
+          <button class="btn btn-secondary btn-sm" onclick="removePhoto()">Remove Photo</button>
+        </div>
+        <input type="file" id="avatarFileInput" accept="image/*" onchange="previewFile()">
+      </div>
+
+      <!-- Detail configurations -->
+      <div class="input-wrap">
+        <label for="usernameInput">Username</label>
+        <input id="usernameInput" class="input" placeholder="Desired Username" autocomplete="name">
+      </div>
+
+      <div class="input-wrap">
+        <label for="emailInput">Email Address</label>
+        <input id="emailInput" class="input" type="email" placeholder="you@example.com" autocomplete="email">
+      </div>
+
+      <div class="input-wrap">
+        <label for="phoneInput">Phone Number</label>
+        <input id="phoneInput" class="input" placeholder="Phone sequence">
+      </div>
+
+      <!-- Action commits -->
+      <div style="display: flex; gap: 12px; margin-top: 28px;">
+        <button class="btn" id="saveProfileBtn" onclick="saveProfile()" style="flex: 1.5;">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+          <span id="saveProfileBtnText">Save Settings</span>
+        </button>
+        <button class="btn btn-secondary" onclick="location.href='/notes'" style="flex: 0.8;">Cancel</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/static/script.js"></script>
+  <script>
+    buildNavbar(''); // Empty key as profile doesn't require active link highlight
+
+    let removeAvatarFlag = false;
+
+    // Load existing user details on entry
+    async function loadProfileInfo() {
+      try {
+        const res = await fetch('/auth/profile_info', { credentials: 'include' });
+        const data = await res.json();
+        
+        if (data.status === 'success') {
+          document.getElementById('usernameInput').value = data.user.username || '';
+          document.getElementById('emailInput').value = data.user.email || '';
+          document.getElementById('phoneInput').value = data.user.phone || '';
+          document.getElementById('avatarPreview').src = data.user.profile_pic || '/static/profile/default.png';
+        } else {
+          toast('Failed to load profile details.', 'error');
+          setTimeout(() => location.href = '/auth', 1200);
+        }
+      } catch {
+        toast('Connection anomaly loading user settings.', 'error');
+      }
+    }
+
+    function triggerFileInput() {
+      document.getElementById('avatarFileInput').click();
+    }
+
+    function previewFile() {
+      const preview = document.getElementById('avatarPreview');
+      const file = document.getElementById('avatarFileInput').files[0];
+      const reader = new FileReader();
+
+      reader.addEventListener("load", () => {
+        preview.src = reader.result;
+        removeAvatarFlag = false;
+      }, false);
+
+      if (file) {
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removePhoto() {
+      document.getElementById('avatarPreview').src = '/static/profile/default.png';
+      document.getElementById('avatarFileInput').value = ''; // Reset file input selection
+      removeAvatarFlag = true;
+      toast('Photo marked for removal.', 'info');
+    }
+
+    async function saveProfile() {
+      const username = document.getElementById('usernameInput').value.trim();
+      const email = document.getElementById('emailInput').value.trim();
+      const phone = document.getElementById('phoneInput').value.trim();
+
+      if (!username || !email || !phone) {
+        toast('All node settings are required.', 'error');
+        return;
+      }
+
+      const btn = document.getElementById('saveProfileBtn');
+      const txt = document.getElementById('saveProfileBtnText');
+      btn.disabled = true;
+      txt.textContent = 'Saving...';
+
+      const formData = new FormData();
+      formData.append('username', username);
+      formData.append('email', email);
+      formData.append('phone', phone);
+      formData.append('remove_avatar', removeAvatarFlag ? 'true' : 'false');
+
+      const fileInput = document.getElementById('avatarFileInput');
+      if (fileInput.files.length > 0 && !removeAvatarFlag) {
+        formData.append('avatar', fileInput.files[0]);
+      }
+
+      try {
+        const res = await fetch('/auth/update_profile', {
+          method: 'POST',
+          credentials: 'include',
+          body: formData
+        });
+        const data = await res.json();
+
+        if (data.status === 'success') {
+          // Sync local user cache so header changes instantly
+          localStorage.setItem('user', JSON.stringify(data.user));
+          buildNavbar(''); // Refresh header picture and labels
+          
+          toast('Node settings updated successfully!', 'success');
+          setTimeout(() => location.href = '/notes', 1000);
+        } else {
+          toast(data.message || 'Failed to update profile settings.', 'error');
+          btn.disabled = false;
+          txt.textContent = 'Save Settings';
+        }
+      } catch {
+        toast('Network anomaly saving profile configs.', 'error');
+        btn.disabled = false;
+        txt.textContent = 'Save Settings';
+      }
+    }
+
+    loadProfileInfo();
+  </script>
+</body>
+</html>

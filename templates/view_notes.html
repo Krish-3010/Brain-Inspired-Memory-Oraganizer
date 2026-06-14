@@ -1,118 +1,396 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Your Notes - Brain Memory Organizer</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="View and manage your notes in a wobbly hand-sketched notebook organizer."/>
+  <title>My Archive — Brain Organizer</title>
+  
+  <link rel="stylesheet" href="/static/style.css">
 
   <style>
-    *{box-sizing:border-box;font-family:'Poppins',sans-serif}
-    body{margin:0;background:radial-gradient(circle at top left,#071226,#000);color:#e8eef6;min-height:100vh}
-    #particles-js{position:fixed;inset:0;z-index:-2}
-    body::before{content:"";position:fixed;inset:0;background:linear-gradient(-45deg,#00102b,#001f3f,#150050,#000);background-size:400% 400%;animation:gradientShift 12s ease infinite;opacity:.6;z-index:-3}
-    @keyframes gradientShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
-    nav{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;padding:14px 30px;background:rgba(4,8,15,0.7);z-index:1000}
-    .logo{color:#00E5FF;font-weight:700;display:flex;align-items:center;gap:10px}
-    .nav-links a{color:#e8eef6;margin-left:18px;text-decoration:none}
-    .nav-links button{color:#e8eef6;margin-left:18px;text-decoration:none}
-    .nav-spacer{height:92px}
+    .notes-page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 16px 80px;
+    }
 
-    .search-wrap{display:flex;justify-content:center;margin:22px 16px}
-    #searchBox{width:60%;padding:14px;border-radius:12px;border:none;background:rgba(255,255,255,0.06);outline:none;color:#e8eef6;box-shadow:0 8px 30px rgba(0,0,0,0.5)}
-    .notes-container{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px;width:88%;margin:20px auto 120px;align-items:start}
-    .note-card{background:rgba(255,255,255,0.035);padding:18px;border-radius:14px;border:1px solid rgba(255,255,255,0.03);box-shadow:0 10px 30px rgba(0,0,0,0.5)}
-    .note-title{color:#00E5FF;font-weight:700;margin-bottom:10px}
-    .note-content{color:#dfe6f8;margin-bottom:10px}
-    .delete-btn{background:#ff6b6b;border:none;color:#fff;padding:8px 12px;border-radius:10px;cursor:pointer;font-weight:700}
-    footer{padding:30px;text-align:center;color:#9fb0d5}
+    .notes-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .notes-header h1 {
+      font-size: 1.8rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .notes-count-badge {
+      font-size: 0.9rem;
+      font-weight: 700;
+      padding: 2px 10px;
+      background-color: var(--bg-postit);
+      border: 2px dashed var(--color-border);
+      border-radius: var(--wobbly);
+      color: var(--fg-lead);
+      font-family: var(--font-heading);
+    }
+
+    .search-box-wrap {
+      position: relative;
+      margin-bottom: 40px;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .search-box-wrap .input {
+      padding-left: 44px;
+      padding-right: 44px;
+    }
+
+    .search-icon-left {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--fg-lead);
+      pointer-events: none;
+    }
+
+    .search-clear-btn {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      font-size: 1.15rem;
+      cursor: pointer;
+      color: var(--fg-lead);
+      opacity: 0.6;
+    }
+    .search-clear-btn:hover {
+      opacity: 1;
+    }
+
+    /* Sketch note card custom details */
+    .note-card-sketch {
+      height: 230px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .note-content-sketch {
+      max-height: 110px;
+      overflow-y: auto;
+      font-size: 1.15rem;
+      opacity: 0.85;
+      padding-right: 4px;
+      margin-top: 8px;
+    }
+
+    /* Scrollbar override */
+    .note-content-sketch::-webkit-scrollbar {
+      width: 4px;
+    }
+    .note-content-sketch::-webkit-scrollbar-thumb {
+      background-color: var(--color-border);
+      border-radius: 2px;
+    }
+
+    .confirm-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(45, 45, 45, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+
+    .confirm-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .confirm-box {
+      background-color: var(--bg-card);
+      border: 3px solid var(--color-border);
+      border-radius: var(--wobbly-card);
+      padding: 32px;
+      max-width: 380px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 8px 8px 0px var(--color-border);
+      transform: scale(0.92) rotate(-1deg);
+      transition: transform 0.2s ease;
+      position: relative;
+    }
+
+    .confirm-box::before {
+      content: '';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%) rotate(2deg);
+      width: 80px;
+      height: 22px;
+      background-color: var(--tape-color);
+      border: 1px dashed var(--tape-border);
+    }
+
+    .confirm-overlay.active .confirm-box {
+      transform: scale(1) rotate(0deg);
+    }
+
+    .confirm-title {
+      font-family: var(--font-heading);
+      font-size: 1.35rem;
+      margin-bottom: 8px;
+    }
+
+    .confirm-desc {
+      font-size: 1.15rem;
+      color: var(--fg-lead);
+      opacity: 0.8;
+      margin-bottom: 24px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 16px;
+      border: 3px dashed var(--color-border);
+      border-radius: var(--wobbly-card);
+      background-color: var(--bg-card);
+    }
   </style>
 </head>
 <body>
-  <div id="particles-js"></div>
-
-  <nav>
-    <div class="logo"><img src="https://img.icons8.com/fluency/96/brain.png" style="width:40px"/><span>Brain Memory</span></div>
-    <div class="nav-links"><a href="/">Home</a><a href="/create_note">Create Note</a><button onclick="logout()">Logout</button></div>
-  </nav>
-  <div class="nav-spacer"></div>
-
-  <div class="search-wrap">
-    <input id="searchBox" placeholder="Search your notes..." onkeyup="searchNotes()" />
+  <!-- Header -->
+  <div class="nav-wrapper">
+    <nav>
+      <a class="nav-logo" href="/">
+        <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+        </svg>
+        <span>Brain Organizer</span>
+      </a>
+      <div class="nav-links" id="navLinks"></div>
+    </nav>
   </div>
 
-  <div id="notesContainer" class="notes-container"></div>
+  <div class="nav-spacer"></div>
 
-<script>
-  particlesJS("particles-js", { particles:{ number:{ value:60 }, color:{value:"#00E5FF"}, shape:{type:"circle"}, opacity:{value:0.45}, size:{value:2}, move:{speed:1} }, interactivity:{ events:{ onhover:{ enable:true, mode:"repulse" } } } });
+  <!-- Main Grid Page -->
+  <div class="notes-page">
+    
+    <div class="notes-header">
+      <h1>
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="color:var(--accent-blue);"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" /></svg>
+        My Memory Archive
+        <span class="notes-count-badge" id="countBadge">Loading...</span>
+      </h1>
+      
+      <button class="btn btn-sm" onclick="location.href='/create_note'">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+        Add Memory
+      </button>
+    </div>
 
-  async function loadNotes(){
-    const res = await fetch('/get_notes', { credentials: 'include' });
-    const data = await res.json();
-    const container = document.getElementById('notesContainer');
-    container.innerHTML = '';
-    if(!data.notes || Object.keys(data.notes).length === 0){
-      container.innerHTML = '<p style="color:#cbd8f0;text-align:center;width:100%;">No notes found yet.</p>';
-      return;
+    <!-- Search input -->
+    <div class="search-box-wrap">
+      <svg class="search-icon-left" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+      </svg>
+      <input id="searchBox" class="input" placeholder="Search notes by title..." oninput="onSearch(this)">
+      <button class="search-clear-btn" id="clearBtn" onclick="clearSearch()" style="display:none;">✕</button>
+    </div>
+
+    <!-- Grid contents -->
+    <div id="notesContainer">
+      <!-- Loading placeholders -->
+      <div class="notes-grid" id="skeletonGrid">
+        <div class="skeleton-note"></div>
+        <div class="skeleton-note"></div>
+        <div class="skeleton-note"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Sketched Confirm overlay dialog -->
+  <div class="confirm-overlay" id="confirmModal" onclick="closeConfirm(event)">
+    <div class="confirm-box">
+      <div class="confirm-title">Delete Memory Note?</div>
+      <div class="confirm-desc" id="confirmMsg">This note card will be deleted permanently.</div>
+      <div style="display: flex; gap: 12px; margin-top: 20px;">
+        <button class="btn btn-secondary btn-sm" onclick="closeConfirm()" style="flex: 1;">Cancel</button>
+        <button class="btn btn-sm" id="confirmDeleteBtn" onclick="confirmDelete()" style="flex: 1; background-color: var(--accent-red); color: #ffffff;">Delete Note</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="/static/script.js"></script>
+  <script>
+    buildNavbar('notes');
+
+    let allNotes = {};
+    let pendingDel = null;
+
+    async function loadNotes() {
+      try {
+        const res = await fetch('/get_notes', { credentials: 'include' });
+        const data = await res.json();
+        if (data.status === 'error') {
+          toast('Notebook session expired.', 'error');
+          setTimeout(() => location.href = '/auth', 1200);
+          return;
+        }
+        allNotes = data.notes || {};
+        renderNotes(allNotes);
+      } catch {
+        toast('Could not download notebook keys.', 'error');
+      }
     }
-    for(const [title, content] of Object.entries(data.notes)){
-      const card = document.createElement('div'); card.className='note-card';
-      card.innerHTML = `<div class="note-title">${escapeHtml(title)}</div>
-                        <div class="note-content">${escapeHtml(content)}</div>
-                        <button class="delete-btn" onclick="deleteNote('${encodeURIComponent(title)}')">🗑 Delete</button>`;
-      container.appendChild(card);
-    }
-  }
 
-  function logout(){
-    fetch('/auth/logout', { method: 'POST', credentials: 'include' })
-      .finally(()=> {
-        localStorage.removeItem('user');
-        location.href = '/auth';
+    function renderNotes(notes) {
+      const container = document.getElementById('notesContainer');
+      container.innerHTML = '';
+      const entries = Object.entries(notes);
+      
+      const countBadge = document.getElementById('countBadge');
+      countBadge.textContent = entries.length + (entries.length === 1 ? ' card' : ' cards');
+
+      if (entries.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <svg fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" style="width:40px;height:40px;margin:0 auto 12px;color:var(--fg-lead);opacity:0.6;"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" /></svg>
+            <p style="margin-bottom:16px;">Your memory bank is empty. Start recording notes.</p>
+            <button class="btn btn-sm" onclick="location.href='/create_note'">Write First Note</button>
+          </div>`;
+        return;
+      }
+
+      const grid = document.createElement('div');
+      grid.className = 'notes-grid';
+
+      // Define decorative types and rotation configurations to give collage paper notes feel
+      const decors = ['decoration-tape', 'decoration-tack', 'decoration-tape', ''];
+      const colors = ['', 'postit-yellow', '', ''];
+
+      entries.forEach(([title, content], i) => {
+        const decor = decors[i % decors.length];
+        const color = colors[i % colors.length];
+        
+        // Slight random rotation degree between -2 and 2
+        const rVal = ((i * 7) % 5) - 2;
+
+        const card = document.createElement('div');
+        card.className = `sketch-card note-card-sketch note-capsule ${decor} ${color}`;
+        card.style.setProperty('--rotation', rVal);
+        card.setAttribute('data-note-title', title);
+        
+        card.innerHTML = `
+          <div>
+            <div class="note-header">
+              <h3 class="note-title">${escapeHtml(title)}</h3>
+              <button class="action-icon" onclick="promptDelete(event, '${encodeURIComponent(title)}')">
+                <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                </svg>
+              </button>
+            </div>
+            <div class="note-content-sketch">${escapeHtml(content)}</div>
+          </div>
+          <div class="note-footer">
+            <span style="font-size:0.95rem; opacity:0.6;">${content.length} characters</span>
+          </div>`;
+        
+        grid.appendChild(card);
       });
-  }
-  async function deleteNote(encodedTitle){
-    const title = decodeURIComponent(encodedTitle);
-    if(!confirm(`Delete "${title}"?`)) return;
-    const res = await fetch('/delete_note', {
-      method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include',
-      body: JSON.stringify({ title })
-    });
-    const data = await res.json();
-    alert(data.message);
-    if(data.status === 'success') loadNotes();
-  }
 
-  async function searchNotes(){
-    const q = document.getElementById('searchBox').value.trim();
-    const container = document.getElementById('notesContainer');
-    if(!q){ loadNotes(); return; }
-    const res = await fetch(`/search_notes?q=${encodeURIComponent(q)}`, { credentials:'include' });
-    const data = await res.json();
-    container.innerHTML = '';
-    if(!data.results || Object.keys(data.results).length === 0){
-      container.innerHTML = '<p style="color:#cbd8f0;text-align:center;width:100%;">No matching notes found.</p>'; 
-      return;
+      container.appendChild(grid);
     }
-    for(const [title, content] of Object.entries(data.results)){
-      const card = document.createElement('div'); card.className='note-card';
-      card.innerHTML = `<div class="note-title">${escapeHtml(title)}</div>
-                        <div class="note-content">${escapeHtml(content)}</div>
-                        <button class="delete-btn" onclick="deleteNote('${encodeURIComponent(title)}')">🗑 Delete</button>`;
-      container.appendChild(card);
+
+    let searchTimer;
+    function onSearch(el) {
+      const q = el.value.trim();
+      document.getElementById('clearBtn').style.display = q ? 'block' : 'none';
+      clearTimeout(searchTimer);
+      if (!q) { renderNotes(allNotes); return; }
+      searchTimer = setTimeout(() => searchNotes(q), 200);
     }
-  }
 
-  function escapeHtml(s){ 
-    return (s||'').toString()
-      .replace(/&/g,'&amp;')
-      .replace(/</g,'&lt;')
-      .replace(/>/g,'&gt;')
-      .replace(/"/g,'&quot;')
-      .replace(/'/g,'&#039;'); 
-  }
+    async function searchNotes(q) {
+      try {
+        const res = await fetch(`/search_notes?q=${encodeURIComponent(q)}`, { credentials: 'include' });
+        const data = await res.json();
+        renderNotes(data.results || {});
+      } catch {
+        toast('Failed to search memory archive.', 'error');
+      }
+    }
 
-  // initial load
-  loadNotes();
-</script>
-<footer>© 2025 Brain Inspired Memory Organizer
+    function clearSearch() {
+      document.getElementById('searchBox').value = '';
+      document.getElementById('clearBtn').style.display = 'none';
+      renderNotes(allNotes);
+    }
+
+    function promptDelete(event, encodedTitle) {
+      event.stopPropagation();
+      pendingDel = decodeURIComponent(encodedTitle);
+      document.getElementById('confirmMsg').textContent = `Are you sure you want to delete "${pendingDel}" from your memory archive?`;
+      document.getElementById('confirmModal').classList.add('active');
+    }
+
+    function closeConfirm(e) {
+      if (!e || e.target === document.getElementById('confirmModal') || e.type === 'click') {
+        document.getElementById('confirmModal').classList.remove('active');
+        pendingDel = null;
+      }
+    }
+
+    async function confirmDelete() {
+      if (!pendingDel) return;
+      const title = pendingDel;
+      document.getElementById('confirmModal').classList.remove('active');
+
+      try {
+        const res = await fetch('/delete_note', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ title })
+        });
+        const data = await res.json();
+        if (data.status === 'success') {
+          toast(`"${title}" deleted from memory archive.`, 'success');
+          delete allNotes[title];
+          renderNotes(allNotes);
+        } else {
+          toast(data.message || 'Erase request rejected.', 'error');
+        }
+      } catch {
+        toast('Connection interruption during erase transaction.', 'error');
+      }
+      
+      pendingDel = null;
+    }
+
+    loadNotes();
+  </script>
+</body>
+</html>
